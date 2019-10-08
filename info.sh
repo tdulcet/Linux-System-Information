@@ -36,10 +36,10 @@ ARCHITECTURE=$(getconf LONG_BIT)
 echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)"
 
 TOTAL_PHYSICAL_MEM=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
-echo -e "Total memory (RAM):\t\t$(printf "%'d" $((TOTAL_PHYSICAL_MEM / 1024))) MiB ($(printf "%'d" $((((TOTAL_PHYSICAL_MEM * 1024) / 1000) / 1000))) MB)"
+echo -e "Total memory (RAM):\t\t$(printf "%'d" $((TOTAL_PHYSICAL_MEM / 1024))) MiB$([[ $TOTAL_PHYSICAL_MEM -ge 1048576 ]] && echo " ($(numfmt --from=iec --to=iec-i "${TOTAL_PHYSICAL_MEM}K")B)") ($(printf "%'d" $((((TOTAL_PHYSICAL_MEM * 1024) / 1000) / 1000))) MB$([[ $TOTAL_PHYSICAL_MEM -ge 1000000 ]] && echo " ($(numfmt --from=iec --to=si "${TOTAL_PHYSICAL_MEM}K")B)"))"
 
 TOTAL_SWAP=$(awk '/^SwapTotal:/ {print $2}' /proc/meminfo)
-echo -e "Total swap space:\t\t$(printf "%'d" $((TOTAL_SWAP / 1024))) MiB ($(printf "%'d" $((((TOTAL_SWAP * 1024) / 1000) / 1000))) MB)"
+echo -e "Total swap space:\t\t$(printf "%'d" $((TOTAL_SWAP / 1024))) MiB$([[ $TOTAL_SWAP -ge 1048576 ]] && echo " ($(numfmt --from=iec --to=iec-i "${TOTAL_SWAP}K")B)") ($(printf "%'d" $((((TOTAL_SWAP * 1024) / 1000) / 1000))) MB$([[ $TOTAL_SWAP -ge 1000000 ]] && echo " ($(numfmt --from=iec --to=si "${TOTAL_SWAP}K")B)"))"
 
 if command -v lspci >/dev/null; then
 	mapfile -t GPU < <(lspci 2>/dev/null | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
