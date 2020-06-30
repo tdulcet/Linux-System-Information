@@ -7,7 +7,7 @@
 
 set -e
 
-if [[ "$#" -ne 0 ]]; then
+if [[ $# -ne 0 ]]; then
 	echo "Usage: $0" >&2
 	exit 1
 fi
@@ -89,7 +89,6 @@ int main()
 }
 EOF
 
+trap 'rm /tmp/types.cpp /tmp/types' EXIT
 g++ -std=c++11 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
 /tmp/types
-rm /tmp/types.cpp
-rm /tmp/types

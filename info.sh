@@ -5,7 +5,7 @@
 # wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s --
 # ./info.sh
 
-if [[ "$#" -ne 0 ]]; then
+if [[ $# -ne 0 ]]; then
 	echo "Usage: $0" >&2
 	exit 1
 fi
@@ -96,7 +96,7 @@ fi
 echo -e "Computer name:\t\t\t$HOSTNAME"
 
 if command -v iwgetid >/dev/null; then
-	NETWORKNAME=$(iwgetid -r)
+	NETWORKNAME=$(iwgetid -r || true)
 fi
 if [[ -n "$NETWORKNAME" ]]; then
 	echo -e "Network name (SSID):\t\t$NETWORKNAME"
@@ -142,6 +142,9 @@ if [[ -n "$NET_INERFACES" ]]; then
 	done
 fi
 
+COMPUTER_ID=$(</var/lib/dbus/machine-id)
+echo -e "Computer ID:\t\t\t$COMPUTER_ID"
+
 TIME_ZONE=$(timedatectl 2>/dev/null | grep -i 'time zone:\|timezone:' | sed -n 's/^.*: //p')
 echo -e "Time zone:\t\t\t$TIME_ZONE"
 
@@ -159,7 +162,7 @@ echo -e "Bash Version:\t\t\t$BASH_VERSION"
 
 if [[ -c /dev/tty ]]; then
 	stty raw min 0 time 10 </dev/tty
-	read -p $'\x05' -rs -t 1 TERMINAL </dev/tty
+	read -p $'\x05' -rs -t 1 TERMINAL </dev/tty || true
 	stty cooked </dev/tty
 fi
 echo -e "\rTerminal:\t\t\t$TERM${TERMINAL:+ ($TERMINAL)}"

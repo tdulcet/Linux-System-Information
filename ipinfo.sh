@@ -2,12 +2,12 @@
 
 # Teal Dulcet
 # Outputs the systems public IP addresses
-# wget https://raw.github.com/tdulcet/System-Usage-Information/master/ipinfo.sh -qO - | bash -s --
+# wget https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh -qO - | bash -s --
 # ./ipinfo.sh
 
 # Adapted from: https://github.com/rsp/scripts/blob/master/externalip.md
 
-if [[ "$#" -ne 0 ]]; then
+if [[ $# -ne 0 ]]; then
 	echo "Usage: $0" >&2
 	exit 1
 fi
@@ -39,18 +39,17 @@ wgetip.com/
 gso.cs.pdx.edu/ip/
 )
 
-echo "Public IP addresses"
+echo -e "\nPublic IP addresses"
 
 for ip in 4 6; do
-	httpsl=''
+	echo -e "\nIPv$ip address Best HTTPS response times:"
 	
 	for url in "${urls[@]}"; do
 		cout=$(curl -"$ip" -m10 -sLw '\n%{time_total}\n' "https://$url")
 		answer=$(echo "$cout" | head -n 1)
 		time=$(echo "$cout" | tail -n 1)
-		httpsl+="$time seconds\thttps://$url\t${answer:--}\n"
-	done
-
-	echo -e "\nIPv$ip address Best HTTPS response times:"
-	echo -e "$httpsl" | sort -n | column -t -s $'\t'
+		printf '%s seconds\thttps://%s\t%s\n' "$time" "$url" "${answer:--}"
+	done | sort -n | column -t -s $'\t'
 done
+
+echo
