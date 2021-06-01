@@ -45,7 +45,7 @@ for ip in 4 6; do
 	echo -e "\nIPv$ip address Best HTTPS response times:"
 	
 	for url in "${urls[@]}"; do
-		cout=$(curl -"$ip" -m10 -sLw '\n%{time_total}\n' "https://$url")
+		cout=$(curl -"$ip" -m10 -sLw '\n%{time_total}\n' "https://$url" || true)
 		answer=$(echo "$cout" | head -n 1)
 		time=$(echo "$cout" | tail -n 1)
 		printf '%s seconds\thttps://%s\t%s\n' "$time" "$url" "${answer:--}"

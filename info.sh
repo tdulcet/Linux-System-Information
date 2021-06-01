@@ -55,9 +55,9 @@ if [[ -n "$MODEL" ]]; then
 	echo -e "Computer Model:\t\t\t$MODEL"
 fi
 
-mapfile -t CPU < <(sed -n 's/^model name[[:space:]]*: *//p' /proc/cpuinfo | uniq)
+mapfile -t CPU < <(sed -n 's/^model name[[:blank:]]*: *//p' /proc/cpuinfo | uniq)
 if [[ -n "$CPU" ]]; then
-	echo -e "Processor (CPU):\t\t${CPU[0]}$([[ ${#CPU[*]} -gt 1 ]] && echo; printf '\t\t\t\t%s\n' "${CPU[@]:1}")"
+	echo -e "Processor (CPU):\t\t${CPU[0]}$([[ ${#CPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${CPU[@]:1}")"
 fi
 
 CPU_THREADS=$(nproc --all) # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
@@ -84,13 +84,14 @@ if [[ -n "$DISKS" ]]; then
 	done
 fi
 
-if command -v lspci >/dev/null; then
-	mapfile -t GPU < <(lspci 2>/dev/null | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
-elif command -v /sbin/lspci >/dev/null; then
-	mapfile -t GPU < <(/sbin/lspci 2>/dev/null | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
-fi
+for lspci in lspci /sbin/lspci; do
+	if command -v $lspci >/dev/null; then
+		mapfile -t GPU < <($lspci 2>/dev/null | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
+		break
+	fi
+done
 if [[ -n "$GPU" ]]; then
-	echo -e "Graphics Processor (GPU):\t${GPU[0]}$([[ ${#GPU[*]} -gt 1 ]] && echo; printf '\t\t\t\t%s\n' "${GPU[@]:1}")"
+	echo -e "Graphics Processor (GPU):\t${GPU[0]}$([[ ${#GPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${GPU[@]:1}")"
 fi
 
 echo -e "Computer name:\t\t\t$HOSTNAME"

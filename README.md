@@ -26,11 +26,11 @@ Outputs system information on Linux, including:
 
 RAM, swap and disk space is output in both MiB (1024<sup>2</sup> bytes) and MB (1000<sup>2</sup> bytes). Similar to the [`systeminfo`](https://en.wikipedia.org/wiki/Systeminfo.exe) command on Windows.
 
-Useful when using an unfamiliar system or VM, particularly before running a program that has specific system requirements. All the values are saved to variables, which makes this easy to incorporate into larger scripts.
+Useful when using an unfamiliar system or VM, particularly before running a program that has specific system requirements. All the values are saved to variables, which makes this easy to [incorporate](#scripts-where-this-is-incorporated) into larger scripts.
 
 For your Public IP address and Hostname, please see [this page](https://gso.cs.pdx.edu/info/) (under "Command Line Interface (CLI)").
 
-Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support this script and my other software development.
+❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support this script and my other software development.
 
 Also see the [Linux System Usage Information](https://github.com/tdulcet/Linux-System-Information) script.
 
@@ -64,7 +64,7 @@ curl https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | ba
 
 ![](images/openSUSE%20Server.png)
 
-### Raspberry Pi (Raspbian)
+### Raspberry Pi OS (Raspbian)
 
 ![](images/Raspberry%20Pi.png)
 
@@ -91,6 +91,24 @@ wget https://raw.github.com/dylanaraps/neofetch/master/neofetch -qO - | bash -s 
 wget https://raw.github.com/KittyKatt/screenFetch/master/screenfetch-dev -qO - | bash -s -- -v
 ```
 * [system-report-card](https://github.com/swelljoe/system-report-card) (Only shows total RAM, swap and disk space)
+
+## Other Scripts
+
+### Data Type Information
+
+Outputs C/C++ data type information, including data type sizes, minimum values, maximum values, etc. for the current system.
+
+```bash
+wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s
+```
+
+### Public IP addresses
+
+Outputs your public IP addresses using a couple dozen different services to find the one with the best HTTPS response times on your network.
+
+```bash
+wget https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh -qO - | bash -s
+```
 
 ## Contributing
 

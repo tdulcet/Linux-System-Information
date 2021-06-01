@@ -24,6 +24,13 @@ if ! command -v g++ >/dev/null; then
 	exit 1
 fi
 
+if [[ -n "$CXX" ]] && ! command -v "$CXX" >/dev/null; then
+	echo "Error: $CXX is not installed." >&2
+	exit 1
+fi
+
+CXX=${CXX:-g++}
+
 cat << EOF > /tmp/types.cpp
 #include <iostream>
 #include <sstream>
@@ -90,5 +97,5 @@ int main()
 EOF
 
 trap 'rm /tmp/types.cpp /tmp/types' EXIT
-g++ -std=c++11 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
+"$CXX" -std=c++11 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
 /tmp/types
