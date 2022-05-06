@@ -8,7 +8,7 @@ Outputs system information on Linux, including:
 * Linux distribution
 * Computer Model
 * Processor (CPU)
-* CPU cores/threads
+* CPU sockets/cores/threads
 * Architecture
 * Total memory (RAM)
 * Total swap space
@@ -28,7 +28,7 @@ RAM, swap and disk space is output in both MiB (1024<sup>2</sup> bytes) and MB (
 
 Useful when using an unfamiliar system or VM, particularly before running a program that has specific system requirements. All the values are saved to variables, which makes this easy to [incorporate](#scripts-where-this-is-incorporated) into larger scripts.
 
-For your Public IP address and Hostname, please see [this page](https://gso.cs.pdx.edu/info/) (under "Command Line Interface (CLI)").
+For your Public IP addresses, please see [Public IP addresses](#public-ip-addresses) below.
 
 ❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support this script and my other software development.
 

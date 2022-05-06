@@ -36,13 +36,13 @@ l2.io/ip
 myip.addr.space/
 tnx.nl/ip
 wgetip.com/
-gso.cs.pdx.edu/ip/
+# gso.cs.pdx.edu/ip/
 )
 
 echo -e "\nPublic IP addresses"
 
 for ip in 4 6; do
-	echo -e "\nIPv$ip address Best HTTPS response times:"
+	echo -e "\nIPv$ip address Best HTTPS response times:\n"
 	
 	for url in "${urls[@]}"; do
 		cout=$(curl -"$ip" -m10 -sLw '\n%{time_total}\n' "https://$url" || true)

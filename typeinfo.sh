@@ -87,10 +87,10 @@ int main()
 	cout << "double:\t\t\t" << setw(width) << floattostring(DBL_MIN) << setw(width) << floattostring(DBL_MAX) << "\n";
 	cout << "long double:\t\t" << setw(width) << floattostring(LDBL_MIN) << setw(width) << floattostring(LDBL_MAX) << "\n\n\n";
 	
-	cout << "Data Type\t\tDecimal digits\n\n";
-	cout << "float:\t\t\t" << FLT_DIG << "\n";
-	cout << "double:\t\t\t" << DBL_DIG << "\n";
-	cout << "long double:\t\t" << LDBL_DIG << "\n\n";
+	cout << "Data Type\t\tDecimal digits\tMantissa bits\n\n";
+	cout << "float:\t\t\t" << FLT_DIG << "\t\t" << FLT_MANT_DIG << "\n";
+	cout << "double:\t\t\t" << DBL_DIG << "\t\t" << DBL_MANT_DIG << "\n";
+	cout << "long double:\t\t" << LDBL_DIG << "\t\t" << LDBL_MANT_DIG << "\n\n";
 	
 	return 0;
 }

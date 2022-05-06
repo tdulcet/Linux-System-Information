@@ -56,13 +56,17 @@ if [[ -n "$MODEL" ]]; then
 fi
 
 mapfile -t CPU < <(sed -n 's/^model name[[:blank:]]*: *//p' /proc/cpuinfo | uniq)
+if [[ -z "$CPU" ]]; then
+	mapfile -t CPU < <(lscpu | grep -i '^model name' | sed -n 's/^.\+:[[:blank:]]*//p' | uniq)
+fi
 if [[ -n "$CPU" ]]; then
 	echo -e "Processor (CPU):\t\t${CPU[0]}$([[ ${#CPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${CPU[@]:1}")"
 fi
 
 CPU_THREADS=$(nproc --all) # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
-CPU_CORES=$(( CPU_THREADS / $(lscpu | grep -i '^thread(s) per core' | sed -n 's/^.\+:[[:blank:]]*//p') ))
-echo -e "CPU Cores/Threads:\t\t$CPU_CORES/$CPU_THREADS"
+CPU_CORES=$(lscpu -ap | grep -v '^#' | awk -F, '{ print $2 }' | sort -nu | wc -l)
+CPU_SOCKETS=$(lscpu | grep -i '^socket(s)' | sed -n 's/^.\+:[[:blank:]]*//p') # $(lscpu -ap | grep -v '^#' | awk -F, '{ print $3 }' | sort -nu | wc -l)
+echo -e "CPU Sockets/Cores/Threads:\t$CPU_SOCKETS/$CPU_CORES/$CPU_THREADS"
 
 ARCHITECTURE=$(getconf LONG_BIT)
 echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)"
@@ -143,8 +147,10 @@ if [[ -n "$NET_INERFACES" ]]; then
 	done
 fi
 
-COMPUTER_ID=$(</var/lib/dbus/machine-id)
-echo -e "Computer ID:\t\t\t$COMPUTER_ID"
+if [[ -r /var/lib/dbus/machine-id ]]; then
+	COMPUTER_ID=$(</var/lib/dbus/machine-id)
+	echo -e "Computer ID:\t\t\t$COMPUTER_ID"
+fi
 
 TIME_ZONE=$(timedatectl 2>/dev/null | grep -i 'time zone:\|timezone:' | sed -n 's/^.*: //p')
 echo -e "Time zone:\t\t\t$TIME_ZONE"
