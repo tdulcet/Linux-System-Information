@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron:  '0 0 1 * *'
+
+jobs:
+  Linux:
+    name: Linux
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+    - name: Script
+      run: |
+        set -x
+        bash -o pipefail -- info.sh
+        bash -e -o pipefail -- ipinfo.sh
+        bash -e -o pipefail -- typeinfo.sh
+        CXX=clang++ bash -e -o pipefail -- typeinfo.sh
+    - name: ShellCheck
+      run: bash -c 'shopt -s globstar; shellcheck -s bash **/*.sh || true'

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: Linux System Information Script
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Teal
+    family-names: Dulcet
+    affiliation: Portland State University
+    orcid: 'https://orcid.org/0009-0008-6616-2631'
+repository-code: 'https://github.com/tdulcet/Linux-System-Information'
+abstract: >-
+  Outputs system information on Linux, including: Linux
+  distribution, computer model, processor, CPU
+  sockets/cores/threads, architecture, total memory and swap
+  space, disk space, graphics processor, hostname and IP
+  addresses.
+license: MIT
