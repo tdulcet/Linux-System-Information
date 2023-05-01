@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04]
       fail-fast: false
     steps:
     - uses: actions/checkout@v3
@@ -25,4 +25,5 @@ jobs:
         bash -e -o pipefail -- typeinfo.sh
         CXX=clang++ bash -e -o pipefail -- typeinfo.sh
     - name: ShellCheck
-      run: bash -c 'shopt -s globstar; shellcheck -s bash **/*.sh || true'
+      run: bash -c 'shopt -s globstar; shellcheck -o avoid-nullary-conditions,check-extra-masked-returns,check-set-e-suppressed,deprecate-which,quote-safe-variables,require-double-brackets -s bash **/*.sh'
+      continue-on-error: true
