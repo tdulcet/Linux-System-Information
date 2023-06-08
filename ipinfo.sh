@@ -23,7 +23,7 @@ diagnostic.opendns.com/myip
 echoip.de/
 eth0.me/
 icanhazip.com/
-ident.me/
+ident.me/ # v4.ident.me/ # v6.ident.me/
 ifconfig.co/
 ifconfig.me/
 ifconfig.pro/
@@ -36,6 +36,7 @@ l2.io/ip
 myip.addr.space/
 tnx.nl/ip
 wgetip.com/
+ifconfig.io/ip
 # gso.cs.pdx.edu/ip/
 )
 

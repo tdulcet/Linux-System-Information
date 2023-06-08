@@ -63,25 +63,25 @@ if [[ -n "$CPU" ]]; then
 	echo -e "Processor (CPU):\t\t${CPU[0]}$([[ ${#CPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${CPU[@]:1}")"
 fi
 
-CPU_THREADS=$(nproc --all) # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
+CPU_THREADS=$(nproc --all) # getconf _NPROCESSORS_CONF # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
 CPU_CORES=$(lscpu -ap | grep -v '^#' | awk -F, '{ print $2 }' | sort -nu | wc -l)
-CPU_SOCKETS=$(lscpu | grep -i '^socket(s)' | sed -n 's/^.\+:[[:blank:]]*//p') # $(lscpu -ap | grep -v '^#' | awk -F, '{ print $3 }' | sort -nu | wc -l)
+CPU_SOCKETS=$(lscpu | grep -i '^\(socket\|cluster\)(s)' | sed -n 's/^.\+:[[:blank:]]*//p' | tail -n 1) # $(lscpu -ap | grep -v '^#' | awk -F, '{ print $3 }' | sort -nu | wc -l)
 echo -e "CPU Sockets/Cores/Threads:\t$CPU_SOCKETS/$CPU_CORES/$CPU_THREADS"
 
 ARCHITECTURE=$(getconf LONG_BIT)
-echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)"
+echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)" # arch, uname -m
 
 MEMINFO=$(</proc/meminfo)
-TOTAL_PHYSICAL_MEM=$(echo "$MEMINFO" | awk '/^MemTotal:/ {print $2}')
+TOTAL_PHYSICAL_MEM=$(echo "$MEMINFO" | awk '/^MemTotal:/ { print $2 }') # (( $(getconf PAGE_SIZE) * $(getconf _PHYS_PAGES) ))
 echo -e "Total memory (RAM):\t\t$(toiec "$TOTAL_PHYSICAL_MEM") ($(tosi "$TOTAL_PHYSICAL_MEM"))"
 
-TOTAL_SWAP=$(echo "$MEMINFO" | awk '/^SwapTotal:/ {print $2}')
+TOTAL_SWAP=$(echo "$MEMINFO" | awk '/^SwapTotal:/ { print $2 }')
 echo -e "Total swap space:\t\t$(toiec "$TOTAL_SWAP") ($(tosi "$TOTAL_SWAP"))"
 
 DISKS=$(lsblk -dbn 2>/dev/null | awk '$6=="disk"')
 if [[ -n "$DISKS" ]]; then
-	DISK_NAMES=( $(echo "$DISKS" | awk '{print $1}') )
-	DISK_SIZES=( $(echo "$DISKS" | awk '{print $4}') )
+	DISK_NAMES=( $(echo "$DISKS" | awk '{ print $1 }') )
+	DISK_SIZES=( $(echo "$DISKS" | awk '{ print $4 }') )
 	echo -e -n "Disk space:\t\t\t"
 	for i in "${!DISK_NAMES[@]}"; do
 		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${DISK_NAMES[i]}: $(printf "%'d" $(( (DISK_SIZES[i] / 1024) / 1024 ))) MiB$([[ ${DISK_SIZES[i]} -ge 1073741824 ]] && echo " ($(numfmt --to=iec-i "${DISK_SIZES[i]}")B)") ($(printf "%'d" $(( (DISK_SIZES[i] / 1000) / 1000 ))) MB$([[ ${DISK_SIZES[i]} -ge 1000000000 ]] && echo " ($(numfmt --to=si "${DISK_SIZES[i]}")B)"))"
@@ -98,7 +98,7 @@ if [[ -n "$GPU" ]]; then
 	echo -e "Graphics Processor (GPU):\t${GPU[0]}$([[ ${#GPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${GPU[@]:1}")"
 fi
 
-echo -e "Computer name:\t\t\t$HOSTNAME"
+echo -e "Computer name:\t\t\t$HOSTNAME" # uname -n # hostname # /proc/sys/kernel/hostname
 
 if command -v iwgetid >/dev/null; then
 	NETWORKNAME=$(iwgetid -r || true)
@@ -110,27 +110,27 @@ fi
 HOSTNAME_FQDN=$(hostname -f) # hostname -A
 echo -e "Hostname:\t\t\t$HOSTNAME_FQDN"
 
-mapfile -t IPv4_ADDRESS < <(ip -o -4 a show up scope global | awk '{print $2,$4}')
+mapfile -t IPv4_ADDRESS < <(ip -o -4 a show up scope global | awk '{ print $2,$4 }')
 if [[ -n "$IPv4_ADDRESS" ]]; then
-	IPv4_INERFACES=( $(printf '%s\n' "${IPv4_ADDRESS[@]}" | awk '{print $1}') )
-	IPv4_ADDRESS=( $(printf '%s\n' "${IPv4_ADDRESS[@]}" | awk '{print $2}') )
+	IPv4_INERFACES=( $(printf '%s\n' "${IPv4_ADDRESS[@]}" | awk '{ print $1 }') )
+	IPv4_ADDRESS=( $(printf '%s\n' "${IPv4_ADDRESS[@]}" | awk '{ print $2 }') )
 	echo -e -n "IPv4 address$([[ ${#IPv4_ADDRESS[*]} -gt 1 ]] && echo "es"):\t\t\t"
 	for i in "${!IPv4_INERFACES[@]}"; do
 		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${IPv4_INERFACES[i]}: ${IPv4_ADDRESS[i]%/*}"
 	done
 fi
-mapfile -t IPv6_ADDRESS < <(ip -o -6 a show up scope global | awk '{print $2,$4}')
+mapfile -t IPv6_ADDRESS < <(ip -o -6 a show up scope global | awk '{ print $2,$4 }')
 if [[ -n "$IPv6_ADDRESS" ]]; then
-	IPv6_INERFACES=( $(printf '%s\n' "${IPv6_ADDRESS[@]}" | awk '{print $1}') )
-	IPv6_ADDRESS=( $(printf '%s\n' "${IPv6_ADDRESS[@]}" | awk '{print $2}') )
+	IPv6_INERFACES=( $(printf '%s\n' "${IPv6_ADDRESS[@]}" | awk '{ print $1 }') )
+	IPv6_ADDRESS=( $(printf '%s\n' "${IPv6_ADDRESS[@]}" | awk '{ print $2 }') )
 	echo -e -n "IPv6 address$([[ ${#IPv6_ADDRESS[*]} -gt 1 ]] && echo "es"):\t\t\t"
 	for i in "${!IPv6_INERFACES[@]}"; do
 		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${IPv6_INERFACES[i]}: ${IPv6_ADDRESS[i]%/*}"
 	done
 fi
 
-# ip -o l show up | grep -v 'loopback' | awk '{print $2,$(NF-2)}'
-INERFACES=( $(ip -o a show up primary scope global | awk '{print $2}' | uniq) )
+# ip -o l show up | grep -v 'loopback' | awk '{ print $2,$(NF-2) }'
+INERFACES=( $(ip -o a show up primary scope global | awk '{ print $2 }' | uniq) )
 NET_INERFACES=()
 NET_ADDRESSES=()
 for inerface in "${INERFACES[@]}"; do

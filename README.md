@@ -82,9 +82,9 @@ curl https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | ba
 
 ## Other Scripts
 
-### Data Type Information
+### Datatype Information
 
-Outputs C/C++ data type information, including data type sizes, minimum values, maximum values, etc. for the current system.
+Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++17.
 
 ```bash
 wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s
