@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Teal Dulcet
-# Outputs C/C++ data type information
+# Outputs C/C++ datatype information
 # wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s --
 # ./typeinfo.sh
 

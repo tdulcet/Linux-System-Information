@@ -34,7 +34,7 @@ For your Public IP addresses, please see [Public IP addresses](#public-ip-addres
 
 ❤️ Please visit [tealdulcet.com](https://www.tealdulcet.com/) to support this script and my other software development.
 
-Also see the [Linux System Usage Information](https://github.com/tdulcet/Linux-System-Information) script.
+Also see the [Linux System Usage Information](https://github.com/tdulcet/System-Usage-Information) script.
 
 ## Usage
 
