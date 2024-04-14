@@ -11,7 +11,7 @@ if [[ $# -ne 0 ]]; then
 fi
 
 # Check if on Linux
-if ! echo "$OSTYPE" | grep -iq "linux"; then
+if ! echo "$OSTYPE" | grep -iq '^linux'; then
 	echo "Error: This script must be run on Linux." >&2
 	exit 1
 fi

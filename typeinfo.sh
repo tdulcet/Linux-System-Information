@@ -12,12 +12,6 @@ if [[ $# -ne 0 ]]; then
 	exit 1
 fi
 
-# Check if on Linux
-if ! echo "$OSTYPE" | grep -iq "linux"; then
-	echo "Error: This script must be run on Linux." >&2
-	exit 1
-fi
-
 if ! command -v g++ >/dev/null; then
 	echo "Error: This script requires the GNU C compiler" >&2
 	echo "On Ubuntu and Debian run: 'sudo apt-get update -y' and 'sudo apt-get install build-essential -y'" >&2
@@ -107,6 +101,14 @@ int main()
 	cout << "unsigned long:\t\t" << sizeof(unsigned long) << '\n';
 	cout << "long long:\t\t" << sizeof(long long) << '\n';
 	cout << "unsigned long long:\t" << sizeof(unsigned long long) << '\n';
+	cout << "int8_t:\t\t\t" << sizeof(int8_t) << '\n';
+	cout << "uint8_t:\t\t" << sizeof(uint8_t) << '\n';
+	cout << "int16_t:\t\t" << sizeof(int16_t) << '\n';
+	cout << "uint16_t:\t\t" << sizeof(uint16_t) << '\n';
+	cout << "int32_t:\t\t" << sizeof(int32_t) << '\n';
+	cout << "uint32_t:\t\t" << sizeof(uint32_t) << '\n';
+	cout << "int64_t:\t\t" << sizeof(int64_t) << '\n';
+	cout << "uint64_t:\t\t" << sizeof(uint64_t) << '\n';
 	cout << "__int16_t:\t\t" << sizeof(__int16_t) << '\n';
 	cout << "__uint16_t:\t\t" << sizeof(__uint16_t) << '\n';
 	cout << "__int32_t:\t\t" << sizeof(__int32_t) << '\n';
@@ -142,12 +144,20 @@ int main()
 	cout << "unsigned long:\t\t" << setw(width) << 0 << setw(width) << ULONG_MAX << '\n';
 	cout << "long long:\t\t" << setw(width) << LLONG_MIN << setw(width) << LLONG_MAX << '\n';
 	cout << "unsigned long long:\t" << setw(width) << 0 << setw(width) << ULLONG_MAX << '\n';
-	cout << "__int16_t :\t\t" << setw(width) << numeric_limits<__int16_t>::min() << setw(width) << numeric_limits<__int16_t>::max() << '\n';
-	cout << "__uint16_t :\t\t" << setw(width) << numeric_limits<__uint16_t>::min() << setw(width) << numeric_limits<__uint16_t>::max() << '\n';
-	cout << "__int32_t :\t\t" << setw(width) << numeric_limits<__int32_t>::min() << setw(width) << numeric_limits<__int32_t>::max() << '\n';
-	cout << "__uint32_t :\t\t" << setw(width) << numeric_limits<__uint32_t>::min() << setw(width) << numeric_limits<__uint32_t>::max() << '\n';
-	cout << "__int64_t :\t\t" << setw(width) << numeric_limits<__int64_t>::min() << setw(width) << numeric_limits<__int64_t>::max() << '\n';
-	cout << "__uint64_t :\t\t" << setw(width) << numeric_limits<__uint64_t>::min() << setw(width) << numeric_limits<__uint64_t>::max() << '\n';
+	cout << "int8_t:\t\t\t" << setw(width) << INT8_MIN << setw(width) << INT8_MAX << '\n';
+	cout << "uint8_t:\t\t" << setw(width) << 0 << setw(width) << UINT8_MAX << '\n';
+	cout << "int16_t:\t\t" << setw(width) << INT16_MIN << setw(width) << INT16_MAX << '\n';
+	cout << "uint16_t:\t\t" << setw(width) << 0 << setw(width) << UINT16_MAX << '\n';
+	cout << "int32_t:\t\t" << setw(width) << INT32_MIN << setw(width) << INT32_MAX << '\n';
+	cout << "uint32_t:\t\t" << setw(width) << 0 << setw(width) << UINT32_MAX << '\n';
+	cout << "int64_t:\t\t" << setw(width) << INT64_MIN << setw(width) << INT64_MAX << '\n';
+	cout << "uint64_t:\t\t" << setw(width) << 0 << setw(width) << UINT64_MAX << '\n';
+	cout << "__int16_t:\t\t" << setw(width) << numeric_limits<__int16_t>::min() << setw(width) << numeric_limits<__int16_t>::max() << '\n';
+	cout << "__uint16_t:\t\t" << setw(width) << numeric_limits<__uint16_t>::min() << setw(width) << numeric_limits<__uint16_t>::max() << '\n';
+	cout << "__int32_t:\t\t" << setw(width) << numeric_limits<__int32_t>::min() << setw(width) << numeric_limits<__int32_t>::max() << '\n';
+	cout << "__uint32_t:\t\t" << setw(width) << numeric_limits<__uint32_t>::min() << setw(width) << numeric_limits<__uint32_t>::max() << '\n';
+	cout << "__int64_t:\t\t" << setw(width) << numeric_limits<__int64_t>::min() << setw(width) << numeric_limits<__int64_t>::max() << '\n';
+	cout << "__uint64_t:\t\t" << setw(width) << numeric_limits<__uint64_t>::min() << setw(width) << numeric_limits<__uint64_t>::max() << '\n';
 #ifdef __SIZEOF_INT128__
 	cout << "__int128_t:\t\t" << setw(width) << outputbase(numeric_limits<__int128_t>::min()) << setw(width) << outputbase(numeric_limits<__int128_t>::max()) << '\n';
 	cout << "__uint128_t:\t\t" << setw(width) << outputbase(numeric_limits<__uint128_t>::min()) << setw(width) << outputbase(numeric_limits<__uint128_t>::max()) << '\n';
