@@ -172,9 +172,9 @@ int main()
 	cout << "\n\n";
 	
 	cout << "Data Type\t\tDecimal digits\tMaximum Decimal digits\tMantissa bits\tMaximum integer\n\n";
-	cout << "float:\t\t\t" << FLT_DIG << "\t\t" << FLT_DECIMAL_DIG << "\t\t\t" << FLT_MANT_DIG << "\t\t" << floattostring(maxint<float>()) << '\n';
-	cout << "double:\t\t\t" << DBL_DIG << "\t\t" << DBL_DECIMAL_DIG << "\t\t\t" << DBL_MANT_DIG << "\t\t" << floattostring(maxint<double>()) << '\n';
-	cout << "long double:\t\t" << LDBL_DIG << "\t\t" << LDBL_DECIMAL_DIG << "\t\t\t" << LDBL_MANT_DIG << "\t\t" << floattostring(maxint<long double>()) << '\n';
+	cout << "float:\t\t\t" << FLT_DIG << "\t\t" << /* FLT_DECIMAL_DIG */ numeric_limits<float>::max_digits10 << "\t\t\t" << FLT_MANT_DIG << "\t\t" << floattostring(maxint<float>()) << '\n';
+	cout << "double:\t\t\t" << DBL_DIG << "\t\t" << /* DBL_DECIMAL_DIG */ numeric_limits<double>::max_digits10 << "\t\t\t" << DBL_MANT_DIG << "\t\t" << floattostring(maxint<double>()) << '\n';
+	cout << "long double:\t\t" << LDBL_DIG << "\t\t" << /* LDBL_DECIMAL_DIG */ numeric_limits<long double>::max_digits10 << "\t\t\t" << LDBL_MANT_DIG << "\t\t" << floattostring(maxint<long double>()) << '\n';
 	cout << '\n';
 	
 	return 0;
@@ -182,5 +182,5 @@ int main()
 EOF
 
 trap 'rm /tmp/types{.cpp,}' EXIT
-"$CXX" -std=gnu++17 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
+"$CXX" -std=gnu++11 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
 /tmp/types

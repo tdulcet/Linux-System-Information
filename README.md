@@ -28,7 +28,7 @@ Simple script to quickly output system information on Linux, including:
 
 RAM, swap and disk space is output in both MiB (1024<sup>2</sup> bytes) and MB (1000<sup>2</sup> bytes). Similar to the [`systeminfo`](https://en.wikipedia.org/wiki/Systeminfo.exe) command on Windows.
 
-Requires Bash 4+. Compared to similar programs, this script outputs much more information and is smaller. Useful when using an unfamiliar system or VM, particularly before running a program that has specific system requirements. All the values are saved to variables, which makes this easy to [incorporate](#scripts-where-this-is-incorporated) into larger scripts.
+Requires at least Bash 4+. Compared to similar programs, this script outputs much more information and is smaller. Useful when using an unfamiliar system or VM, particularly before running a program that has specific system requirements. All the values are saved to variables, which makes this easy to [incorporate](#scripts-where-this-is-incorporated) into larger scripts.
 
 For your Public IP addresses, please see [Public IP addresses](#public-ip-addresses) below.
 
@@ -84,7 +84,7 @@ curl https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | ba
 
 ### Datatype Information
 
-Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++17.
+Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++11. Supports both Linux and macOS.
 
 ```bash
 wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s
