@@ -2,7 +2,7 @@
 
 # Teal Dulcet
 # Outputs the systems public IP addresses
-# wget https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh -qO - | bash -s --
+# wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh | bash -s --
 # ./ipinfo.sh
 
 # Adapted from: https://github.com/rsp/scripts/blob/master/externalip.md
@@ -46,8 +46,10 @@ for ip in 4 6; do
 	echo -e "\nIPv$ip address Best HTTPS response times:\n"
 	
 	for url in "${urls[@]}"; do
-		cout=$(curl -"$ip" -m10 -sLw '\n%{time_total}\n' "https://$url" || true)
-		answer=$(echo "$cout" | head -n 1)
+		answer=''
+		if cout=$(curl -"$ip" -m10 -sSLw '\n%{time_total}\n' "https://$url" 2>&1); then
+			answer=$(echo "$cout" | head -n 1)
+		fi
 		time=$(echo "$cout" | tail -n 1)
 		printf '%s seconds\thttps://%s\t%s\n' "$time" "$url" "${answer:--}"
 	done | sort -n | column -t -s $'\t'

@@ -2,7 +2,7 @@
 
 # Teal Dulcet
 # Outputs system information
-# wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s --
+# wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s --
 # ./info.sh
 
 if [[ $# -ne 0 ]]; then
@@ -18,12 +18,12 @@ fi
 
 # toiec <KiB>
 toiec() {
-	echo "$(printf "%'d" $(( $1 / 1024 ))) MiB$([[ $1 -ge 1048576 ]] && echo " ($(numfmt --from=iec --to=iec-i "${1}K")B)")"
+	echo "$(printf "%'d" $(( $1 >> 10 ))) MiB$([[ $1 -ge 1048576 ]] && echo " ($(numfmt --from=iec --to=iec-i "${1}K")B)")"
 }
 
 # tosi <KiB>
 tosi() {
-	echo "$(printf "%'d" $(( (($1 * 1024) / 1000) / 1000 ))) MB$([[ $1 -ge 1000000 ]] && echo " ($(numfmt --from=iec --to=si "${1}K")B)")"
+	echo "$(printf "%'d" $(( (($1 << 10) / 1000) / 1000 ))) MB$([[ $1 -ge 1000000 ]] && echo " ($(numfmt --from=iec --to=si "${1}K")B)")"
 }
 
 . /etc/os-release
@@ -64,9 +64,84 @@ if [[ -n "$CPU" ]]; then
 fi
 
 CPU_THREADS=$(nproc --all) # getconf _NPROCESSORS_CONF # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
-CPU_CORES=$(lscpu -ap | grep -v '^#' | awk -F, '{ print $2 }' | sort -nu | wc -l)
-CPU_SOCKETS=$(lscpu | grep -i '^\(socket\|cluster\)(s)' | sed -n 's/^.\+:[[:blank:]]*//p' | tail -n 1) # $(lscpu -ap | grep -v '^#' | awk -F, '{ print $3 }' | sort -nu | wc -l)
+declare -A lists
+for file in /sys/devices/system/cpu/cpu[0-9]*/topology/core_cpus_list; do
+	if [[ -r "$file" ]]; then
+		lists[$(<"$file")]=1
+	fi
+done
+if ! (( ${#lists[*]} )); then
+	for file in /sys/devices/system/cpu/cpu[0-9]*/topology/thread_siblings_list; do
+		if [[ -r "$file" ]]; then
+			lists[$(<"$file")]=1
+		fi
+	done
+fi
+CPU_CORES=${#lists[*]}
+# CPU_CORES=$(lscpu -ap | grep -v '^#' | cut -d, -f2 | sort -nu | wc -l)
+lists=()
+for file in /sys/devices/system/cpu/cpu[0-9]*/topology/package_cpus_list; do
+	if [[ -r "$file" ]]; then
+		lists[$(<"$file")]=1
+	fi
+done
+if ! (( ${#lists[*]} )); then
+	for file in /sys/devices/system/cpu/cpu[0-9]*/topology/core_siblings_list; do
+		if [[ -r "$file" ]]; then
+			lists[$(<"$file")]=1
+		fi
+	done
+fi
+CPU_SOCKETS=${#lists[*]}
+# CPU_SOCKETS=$(lscpu -ap | grep -v '^#' | cut -d, -f3 | sort -nu | wc -l) # $(lscpu | grep -i '^\(socket\|cluster\)(s)' | sed -n 's/^.\+:[[:blank:]]*//p' | tail -n 1)
 echo -e "CPU Sockets/Cores/Threads:\t$CPU_SOCKETS/$CPU_CORES/$CPU_THREADS"
+
+CPU_CACHES=()
+declare -A CPU_NUM_CACHES CPU_CACHE_SIZES CPU_TOTAL_CACHE_SIZES
+# CPU_L1I_CACHE_SIZE=$(getconf LEVEL1_ICACHE_SIZE)
+# CPU_L1D_CACHE_SIZE=$(getconf LEVEL1_DCACHE_SIZE)
+# CPU_L2_CACHE_SIZE=$(getconf LEVEL2_CACHE_SIZE)
+# CPU_L3_CACHE_SIZE=$(getconf LEVEL3_CACHE_SIZE)
+# CPU_L4_CACHE_SIZE=$(getconf LEVEL4_CACHE_SIZE)
+lists=()
+for dir in /sys/devices/system/cpu/cpu[0-9]*/cache; do
+	if [[ -d "$dir" ]]; then
+		for file in "$dir"/index[0-9]*/size; do
+			if [[ -r "$file" ]]; then
+				size=$(numfmt --from=iec <"$file")
+				file=${file%/*}
+				level=$(<"$file/level")
+				type=$(<"$file/type")
+				if [[ "$type" == Data ]]; then
+					type=d
+				elif [[ "$type" == Instruction ]]; then
+					type=i
+				else
+					type=''
+				fi
+				name="L$level$type"
+				key="$(<"$file/shared_cpu_list") $name"
+				if [[ -z "${lists[$key]}" ]]; then
+					if [[ -z "${CPU_TOTAL_CACHE_SIZES[$name]}" ]]; then
+						CPU_CACHES+=( "$name" )
+					fi
+					(( ++CPU_NUM_CACHES[$name] ))
+					CPU_CACHE_SIZES[$name]=$size
+					(( CPU_TOTAL_CACHE_SIZES[$name] += size ))
+					lists[$key]=1
+				fi
+			fi
+		done
+	fi
+done
+if (( ${#CPU_CACHES[*]} )); then
+	echo -e -n "CPU Caches:\t\t\t"
+	for i in "${!CPU_CACHES[@]}"; do
+		cache=${CPU_CACHES[i]}
+		(( i )) && printf '\t\t\t\t'
+		echo "$cache: $(printf "%'d" $(( CPU_CACHE_SIZES[$cache] >> 10 ))) KiB × ${CPU_NUM_CACHES[$cache]} ($(numfmt --to=iec-i "${CPU_TOTAL_CACHE_SIZES[$cache]}")B)"
+	done
+fi
 
 ARCHITECTURE=$(getconf LONG_BIT)
 echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)" # arch, uname -m
@@ -84,7 +159,8 @@ if [[ -n "$DISKS" ]]; then
 	DISK_SIZES=( $(echo "$DISKS" | awk '{ print $4 }') )
 	echo -e -n "Disk space:\t\t\t"
 	for i in "${!DISK_NAMES[@]}"; do
-		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${DISK_NAMES[i]}: $(printf "%'d" $(( (DISK_SIZES[i] / 1024) / 1024 ))) MiB$([[ ${DISK_SIZES[i]} -ge 1073741824 ]] && echo " ($(numfmt --to=iec-i "${DISK_SIZES[i]}")B)") ($(printf "%'d" $(( (DISK_SIZES[i] / 1000) / 1000 ))) MB$([[ ${DISK_SIZES[i]} -ge 1000000000 ]] && echo " ($(numfmt --to=si "${DISK_SIZES[i]}")B)"))"
+		(( i )) && printf '\t\t\t\t'
+		echo -e "${DISK_NAMES[i]}: $(printf "%'d" $(( DISK_SIZES[i] >> 20 ))) MiB$([[ ${DISK_SIZES[i]} -ge 1073741824 ]] && echo " ($(numfmt --to=iec-i "${DISK_SIZES[i]}")B)") ($(printf "%'d" $(( (DISK_SIZES[i] / 1000) / 1000 ))) MB$([[ ${DISK_SIZES[i]} -ge 1000000000 ]] && echo " ($(numfmt --to=si "${DISK_SIZES[i]}")B)"))"
 	done
 fi
 
@@ -116,7 +192,8 @@ if [[ -n "$IPv4_ADDRESS" ]]; then
 	IPv4_ADDRESS=( $(printf '%s\n' "${IPv4_ADDRESS[@]}" | awk '{ print $2 }') )
 	echo -e -n "IPv4 address$([[ ${#IPv4_ADDRESS[*]} -gt 1 ]] && echo "es"):\t\t\t"
 	for i in "${!IPv4_INERFACES[@]}"; do
-		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${IPv4_INERFACES[i]}: ${IPv4_ADDRESS[i]%/*}"
+		(( i )) && printf '\t\t\t\t'
+		echo -e "${IPv4_INERFACES[i]}: ${IPv4_ADDRESS[i]%/*}"
 	done
 fi
 mapfile -t IPv6_ADDRESS < <(ip -o -6 a show up scope global | awk '{ print $2,$4 }')
@@ -125,7 +202,8 @@ if [[ -n "$IPv6_ADDRESS" ]]; then
 	IPv6_ADDRESS=( $(printf '%s\n' "${IPv6_ADDRESS[@]}" | awk '{ print $2 }') )
 	echo -e -n "IPv6 address$([[ ${#IPv6_ADDRESS[*]} -gt 1 ]] && echo "es"):\t\t\t"
 	for i in "${!IPv6_INERFACES[@]}"; do
-		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${IPv6_INERFACES[i]}: ${IPv6_ADDRESS[i]%/*}"
+		(( i )) && printf '\t\t\t\t'
+		echo -e "${IPv6_INERFACES[i]}: ${IPv6_ADDRESS[i]%/*}"
 	done
 fi
 
@@ -143,7 +221,8 @@ done
 if [[ -n "$NET_INERFACES" ]]; then
 	echo -e -n "MAC address$([[ ${#NET_INERFACES[*]} -gt 1 ]] && echo "es"):\t\t\t"
 	for i in "${!NET_INERFACES[@]}"; do
-		echo -e "$([[ $i -gt 0 ]] && echo "\t\t\t\t")${NET_INERFACES[i]}: ${NET_ADDRESSES[i]}"
+		(( i )) && printf '\t\t\t\t'
+		echo -e "${NET_INERFACES[i]}: ${NET_ADDRESSES[i]}"
 	done
 fi
 
@@ -152,7 +231,15 @@ if [[ -r /var/lib/dbus/machine-id ]]; then
 	echo -e "Computer ID:\t\t\t$COMPUTER_ID"
 fi
 
-TIME_ZONE=$(timedatectl 2>/dev/null | grep -i 'time zone:\|timezone:' | sed -n 's/^.*: //p')
+TIME_ZONE=$(timedatectl 2>/dev/null | grep -i 'time zone:\|timezone:' | sed -n 's/^.*: //p') # timedatectl show --value -p Timezone
+if [[ -z "$TIME_ZONE" ]]; then
+	if [[ -r /etc/timezone ]]; then
+		TIME_ZONE=$(</etc/timezone)
+	elif [[ -L /etc/localtime ]]; then
+		TIME_ZONE=$(realpath --relative-to /usr/share/zoneinfo /etc/localtime)
+	fi
+	TIME_ZONE+=" ($(date '+%Z, %z'))"
+fi
 echo -e "Time zone:\t\t\t$TIME_ZONE"
 
 echo -e "Language:\t\t\t$LANG"

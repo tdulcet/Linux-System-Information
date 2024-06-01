@@ -11,6 +11,7 @@ Simple script to quickly output system information on Linux, including:
 * Computer Model
 * Processor (CPU)
 * CPU sockets/cores/threads
+* CPU caches
 * Architecture
 * Total memory (RAM)
 * Total swap space
@@ -43,13 +44,13 @@ Supports all modern Linux distributions and the [Windows Subsystem for Linux](ht
 ### wget
 
 ```bash
-wget https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh -qO - | bash -s
+wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
 ```
 
 ### curl
 
 ```bash
-curl https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
+curl -sL https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
 ```
 
 ## Example Output
@@ -87,7 +88,7 @@ curl https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | ba
 Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++11. Supports both Linux and macOS.
 
 ```bash
-wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s
+wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh | bash -s
 ```
 
 ### Public IP addresses
@@ -95,7 +96,7 @@ wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh 
 Outputs your public IP addresses using a couple dozen different services to find the one with the best HTTPS response times on your network.
 
 ```bash
-wget https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh -qO - | bash -s
+wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh | bash -s
 ```
 
 ## Other System Information Scripts
@@ -103,12 +104,12 @@ wget https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh -q
 * [neofetch](https://github.com/dylanaraps/neofetch) (Supports multiple operating systems and Linux distributions, lots of command line options, outputs an ASCII version of the logo for a hard coded set of operating systems, but slow to run, displays less information, many of the features require external dependencies, a display and that it is run directly on the system and many of the features are disabled by default)
 	* Test with this command:
 ```bash
-wget https://raw.github.com/dylanaraps/neofetch/master/neofetch -qO - | bash -s -- -v --no_config
+wget -qO - https://raw.github.com/dylanaraps/neofetch/master/neofetch | bash -s -- -v --no_config
 ```
 * [screenFetch](https://github.com/KittyKatt/screenFetch) (Supports multiple Linux distributions, lots of command line options, outputs an ASCII version of the logo for a hard coded set of distributions, but extremely slow to run and displays less information and many of the features require a display and that it is run directly on the system)
 	* Test with this command:
 ```bash
-wget https://raw.github.com/KittyKatt/screenFetch/master/screenfetch-dev -qO - | bash -s -- -v
+wget -qO - https://raw.github.com/KittyKatt/screenFetch/master/screenfetch-dev | bash -s -- -v
 ```
 * [system-report-card](https://github.com/swelljoe/system-report-card) (Only shows total RAM, swap and disk space)
 
@@ -117,5 +118,6 @@ wget https://raw.github.com/KittyKatt/screenFetch/master/screenfetch-dev -qO - |
 Pull requests welcome! Ideas for contributions:
 
 * Add more system information
+	* Show SELinux status
 * Add more examples
 * Improve the performance

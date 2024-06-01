@@ -2,7 +2,7 @@
 
 # Teal Dulcet
 # Outputs C/C++ datatype information
-# wget https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh -qO - | bash -s --
+# wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh | bash -s --
 # ./typeinfo.sh
 
 set -e
@@ -14,7 +14,7 @@ fi
 
 if ! command -v g++ >/dev/null; then
 	echo "Error: This script requires the GNU C compiler" >&2
-	echo "On Ubuntu and Debian run: 'sudo apt-get update -y' and 'sudo apt-get install build-essential -y'" >&2
+	echo "On Ubuntu and Debian run: 'sudo apt-get update' and 'sudo apt-get install -y build-essential'" >&2
 	exit 1
 fi
 
