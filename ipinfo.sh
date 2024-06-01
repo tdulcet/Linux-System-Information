@@ -44,7 +44,7 @@ echo -e "\nPublic IP addresses"
 
 for ip in 4 6; do
 	echo -e "\nIPv$ip address Best HTTPS response times:\n"
-	
+
 	for url in "${urls[@]}"; do
 		answer=''
 		if cout=$(curl -"$ip" -m10 -sSLw '\n%{time_total}\n' "https://$url" 2>&1); then

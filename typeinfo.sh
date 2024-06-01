@@ -18,14 +18,14 @@ if ! command -v g++ >/dev/null; then
 	exit 1
 fi
 
-if [[ -n "$CXX" ]] && ! command -v "$CXX" >/dev/null; then
+if [[ -n $CXX ]] && ! command -v "$CXX" >/dev/null; then
 	echo "Error: $CXX is not installed." >&2
 	exit 1
 fi
 
 CXX=${CXX:-g++}
 
-cat << EOF > /tmp/types.cpp
+cat <<EOF >/tmp/types.cpp
 #include <iostream>
 #include <sstream>
 #include <cmath>
