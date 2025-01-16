@@ -39,7 +39,7 @@ Also see the [Linux System Usage Information](https://github.com/tdulcet/System-
 
 ## Usage
 
-Supports all modern Linux distributions and the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) (WSL).
+Supports all modern Linux distributions from the last 10+ years and the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) (WSL).
 
 ### wget
 
