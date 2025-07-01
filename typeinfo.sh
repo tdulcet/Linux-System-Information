@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Teal Dulcet
+# Copyright © Teal Dulcet
 # Outputs C/C++ datatype information
 # wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh | bash -s --
 # ./typeinfo.sh
@@ -85,6 +85,7 @@ int main()
 	constexpr int width = DECIMAL_DIG + 19;
 
 	cout << "\nData Type\t\tSize (bytes)\n\n";
+	cout << "void*:\t\t\t" << sizeof(void*) << '\n';
 	cout << "bool:\t\t\t" << sizeof(bool) << '\n';
 	cout << "char:\t\t\t" << sizeof(char) << '\n';
 	cout << "signed char:\t\t" << sizeof(signed char) << '\n';
@@ -126,6 +127,7 @@ int main()
 	cout << "float:\t\t\t" << sizeof(float) << '\n';
 	cout << "double:\t\t\t" << sizeof(double) << '\n';
 	cout << "long double:\t\t" << sizeof(long double) << '\n';
+	cout << "time_t:\t\t\t" << sizeof(time_t) << '\n';
 	cout << "\n\n";
 	
 	cout << "Data Type\t\t" << left << setw(width) << "Minimum value" << setw(width) << "Maximum value" << "\n\n";

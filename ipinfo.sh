@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Teal Dulcet
+# Copyright © Teal Dulcet
 # Outputs the systems public IP addresses
 # wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh | bash -s --
 # ./ipinfo.sh
@@ -37,6 +37,7 @@ urls=(
 	# tnx.nl/ip
 	wgetip.com/
 	ifconfig.io/ip
+	silisoftware.com/tools/ip.php
 	# gso.cs.pdx.edu/ip/
 )
 

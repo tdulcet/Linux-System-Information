@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Teal Dulcet
+# Copyright © Teal Dulcet
 # Outputs system information
 # wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s --
 # ./info.sh
@@ -11,7 +11,7 @@ if [[ $# -ne 0 ]]; then
 fi
 
 # Check if on Linux
-if ! echo "$OSTYPE" | grep -iq '^linux'; then
+if [[ $OSTYPE != linux* ]]; then
 	echo "Error: This script must be run on Linux." >&2
 	exit 1
 fi
@@ -26,9 +26,14 @@ tosi() {
 	echo "$(printf "%'d" $(((($1 << 10) / 1000) / 1000))) MB$([[ $1 -ge 1000000 ]] && echo " ($(numfmt --from=iec --to=si "${1}K")B)")"
 }
 
-. /etc/os-release
+echo
 
-echo -e "\nLinux Distribution:\t\t${PRETTY_NAME:-$ID-$VERSION_ID}"
+if [[ -r /etc/os-release ]]; then
+	. /etc/os-release
+elif [[ -r /usr/lib/os-release ]]; then
+	. /usr/lib/os-release
+fi
+echo -e "Linux Distribution:\t\t${ANSI_COLOR:+\e[${ANSI_COLOR}m}${PRETTY_NAME:-$NAME-$VERSION}${ANSI_COLOR:+\e[m}"
 
 KERNEL=$(</proc/sys/kernel/osrelease) # uname -r
 echo -e "Linux Kernel:\t\t\t$KERNEL"
@@ -63,7 +68,11 @@ if [[ -n $CPU ]]; then
 	echo -e "Processor (CPU):\t\t${CPU[0]}$([[ ${#CPU[*]} -gt 1 ]] && printf '\n\t\t\t\t%s' "${CPU[@]:1}")"
 fi
 
-CPU_THREADS=$(nproc --all) # getconf _NPROCESSORS_CONF # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
+if command -v nproc >/dev/null; then
+	CPU_THREADS=$(nproc --all)
+else
+	CPU_THREADS=$(getconf _NPROCESSORS_CONF) # $(lscpu | grep -i '^cpu(s)' | sed -n 's/^.\+:[[:blank:]]*//p')
+fi
 declare -A lists
 for file in /sys/devices/system/cpu/cpu[0-9]*/topology/core_cpus_list; do
 	if [[ -r $file ]]; then
@@ -120,7 +129,7 @@ for dir in /sys/devices/system/cpu/cpu[0-9]*/cache; do
 					type=''
 				fi
 				name="L$level$type"
-				key="$(<"$file/shared_cpu_list") $name"
+				key="$(<"$file/shared_cpu_list") $name" # $file/shared_cpu_map
 				if [[ -z ${lists[$key]} ]]; then
 					if [[ -z ${CPU_TOTAL_CACHE_SIZES[$name]} ]]; then
 						CPU_CACHES+=("$name")
@@ -143,7 +152,7 @@ if ((${#CPU_CACHES[*]})); then
 	done
 fi
 
-ARCHITECTURE=$(getconf LONG_BIT)
+ARCHITECTURE=$(getconf LONG_BIT) # /sys/kernel/address_bits # printf '\1' | od -dAn
 echo -e "Architecture:\t\t\t$HOSTTYPE (${ARCHITECTURE}-bit)" # arch, uname -m
 
 MEMINFO=$(</proc/meminfo)
@@ -153,10 +162,32 @@ echo -e "Total memory (RAM):\t\t$(toiec "$TOTAL_PHYSICAL_MEM") ($(tosi "$TOTAL_P
 TOTAL_SWAP=$(echo "$MEMINFO" | awk '/^SwapTotal:/ { print $2 }')
 echo -e "Total swap space:\t\t$(toiec "$TOTAL_SWAP") ($(tosi "$TOTAL_SWAP"))"
 
-DISKS=$(lsblk -dbn 2>/dev/null | awk '$6=="disk"')
-if [[ -n $DISKS ]]; then
-	DISK_NAMES=($(echo "$DISKS" | awk '{ print $1 }'))
-	DISK_SIZES=($(echo "$DISKS" | awk '{ print $4 }'))
+# DISKS=$(lsblk -dbn 2>/dev/null | awk '$6=="disk"')
+DISK_NAMES=()
+DISK_SIZES=()
+for dir in /sys/block/*; do
+	if [[ -d $dir ]]; then
+		name=${dir##*/}
+		if [[ -r "$dir/hidden" ]] && (($(<"$dir/hidden"))); then
+			continue
+		fi
+		dev=$(<"$dir/dev")
+		maj=${dev%%:*}
+		if [[ $maj -eq 1 ]]; then
+			continue
+		fi
+		size=$(<"$dir/size")
+		if ! ((size)); then
+			continue
+		fi
+		RE='^(dm-|loop|md)'
+		if [[ ! $name =~ $RE ]] && ! (($(<"$dir/device/type"))); then
+			DISK_NAMES+=("$name")
+			DISK_SIZES+=($((size << 9)))
+		fi
+	fi
+done
+if ((${#DISK_NAMES[*]})); then
 	echo -e -n "Disk space:\t\t\t"
 	for i in "${!DISK_NAMES[@]}"; do
 		((i)) && printf '\t\t\t\t'
@@ -166,7 +197,7 @@ fi
 
 for lspci in lspci /sbin/lspci; do
 	if command -v $lspci >/dev/null; then
-		mapfile -t GPU < <($lspci 2>/dev/null | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
+		mapfile -t GPU < <($lspci 2>/dev/null | cut -d ' ' -f 2- | grep -i 'vga\|3d\|2d' | sed -n 's/^.*: //p')
 		break
 	fi
 done
@@ -226,6 +257,7 @@ if [[ -n $NET_INERFACES ]]; then
 	done
 fi
 
+# /etc/machine-id
 if [[ -r /var/lib/dbus/machine-id ]]; then
 	COMPUTER_ID=$(</var/lib/dbus/machine-id)
 	echo -e "Computer ID:\t\t\t$COMPUTER_ID"
@@ -238,11 +270,12 @@ if [[ -z $TIME_ZONE ]]; then
 	elif [[ -L /etc/localtime ]]; then
 		TIME_ZONE=$(realpath --relative-to /usr/share/zoneinfo /etc/localtime)
 	fi
-	TIME_ZONE+=" ($(date '+%Z, %z'))"
+	TIME_ZONE+=$(printf ' (%(%Z, %z)T)') # date '+%Z, %z'
 fi
 echo -e "Time zone:\t\t\t$TIME_ZONE"
 
-echo -e "Language:\t\t\t$LANG"
+LANGUAGE=$(locale language)
+echo -e "Language:\t\t\t$LANG ($LANGUAGE)"
 
 if command -v systemd-detect-virt >/dev/null && CONTAINER=$(systemd-detect-virt -c); then
 	echo -e "Virtualization container:\t$CONTAINER"
@@ -252,13 +285,20 @@ if command -v systemd-detect-virt >/dev/null && VM=$(systemd-detect-virt -v); th
 	echo -e "Virtual Machine (VM) hypervisor:$VM"
 fi
 
+LIBC_VERSION=$(getconf GNU_LIBC_VERSION) # ldd --version | head -n 1 | awk '{ print $NF }'
+echo -e "libc Version:\t\t\t$LIBC_VERSION"
+
 echo -e "Bash Version:\t\t\t$BASH_VERSION"
 
-if [[ -c /dev/tty ]]; then
+if [[ -c /dev/tty && -r /dev/tty ]]; then
 	stty raw min 0 time 10 </dev/tty
 	read -p $'\x05' -rs -t 1 TERMINAL </dev/tty || true
 	stty cooked </dev/tty
 fi
-echo -e "\rTerminal:\t\t\t$TERM${TERMINAL:+ ($TERMINAL)}"
+# TERMINAL=$(tput longname)
+WIDTH=${COLUMNS:-$(tput cols)}
+HEIGHT=${LINES:-$(tput lines)}
+COLORS=$(tput colors)
+echo -e "\rTerminal:\t\t\t$TERM${TERMINAL:+ ($TERMINAL)}, $WIDTH columns, $HEIGHT lines, $COLORS colors"
 
 echo

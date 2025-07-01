@@ -119,5 +119,6 @@ Pull requests welcome! Ideas for contributions:
 
 * Add more system information
 	* Show SELinux status
+	* Show the DNS Server
 * Add more examples
 * Improve the performance
