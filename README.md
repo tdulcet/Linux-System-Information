@@ -93,7 +93,7 @@ wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typein
 
 ### Public IP addresses
 
-Outputs your public IP addresses using a couple dozen different services to find the one with the best HTTPS response times on your network.
+Outputs your public IP addresses using a couple dozen different services to find the one with the best HTTPS and DNS response times on your network.
 
 ```bash
 wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh | bash -s
