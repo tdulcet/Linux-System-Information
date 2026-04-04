@@ -55,25 +55,33 @@ curl -sL https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh 
 
 ## Example Output
 
-### Ubuntu Desktop
+```
 
-![](images/Ubuntu%20Desktop.png)
+Linux Distribution:             Debian GNU/Linux 11 (bullseye)
+Linux Kernel:                   6.1.21-v8+
+Computer Model:                 Raspberry Pi 4 Model B Rev 1.2
+Processor (CPU):                Cortex-A72
+CPU Sockets/Cores/Threads:      1/4/4
+CPU Caches:                     L1d: 32 KiB × 4 (128KiB)
+                                L1i: 48 KiB × 4 (192KiB)
+                                L2: 1,024 KiB × 1 (1.0MiB)
+Architecture:                   aarch64 (64-bit)
+Total memory (RAM):             3,794 MiB (3.8GiB) (3,978 MB (4.0GB))
+Total swap space:               99 MiB (104 MB)
+Disk space:                     mmcblk0: 60,906 MiB (60GiB) (63,864 MB (64GB))
+Computer name:                  raspberrypi
+Network name (SSID):            Teal's Network
+Hostname:                       raspberrypi
+IPv4 address:                   wlan0: 10.2.248.100
+MAC address:                    wlan0: dc:a6:32:67:46:f2
+Computer ID:                    ce7d0b99f428492a882941fed3c58c06
+Time zone:                      America/Los_Angeles (PDT, -0700)
+Language:                       en_US.UTF-8 (American English)
+libc Version:                   glibc 2.31
+Bash Version:                   5.1.4(1)-release
+Terminal:                       xterm-256color, 198 columns, 53 lines, 256 colors
 
-### Ubuntu Server
-
-![](images/Ubuntu%20Server.png)
-
-### openSUSE Server
-
-![](images/openSUSE%20Server.png)
-
-### Raspberry Pi OS (Raspbian)
-
-![](images/Raspberry%20Pi.png)
-
-### Google Cloud Platform (Debian)
-
-![](images/Google%20Cloud%20Platform.png)
+```
 
 ## Scripts where this is incorporated
 
