@@ -180,8 +180,10 @@ for dir in /sys/block/*; do
 		if ! ((size)); then
 			continue
 		fi
-		RE='^(dm-|loop|md)'
-		if [[ ! $name =~ $RE ]] && ! (($(<"$dir/device/type"))); then
+		case $name in
+			dm-* | loop* | md*) continue ;;
+		esac
+		if [[ ! -r "$dir/device/type" ]] || ! (($(<"$dir/device/type"))); then
 			DISK_NAMES+=("$name")
 			DISK_SIZES+=($((size << 9)))
 		fi
@@ -274,8 +276,10 @@ if [[ -z $TIME_ZONE ]]; then
 fi
 echo -e "Time zone:\t\t\t$TIME_ZONE"
 
-LANGUAGE=$(locale language)
-echo -e "Language:\t\t\t$LANG ($LANGUAGE)"
+if command -v locale >/dev/null; then
+	LANGUAGE=$(locale language)
+fi
+echo -e "Language:\t\t\t$LANG${LANGUAGE:+ ($LANGUAGE)}"
 
 if command -v systemd-detect-virt >/dev/null && CONTAINER=$(systemd-detect-virt -c); then
 	echo -e "Virtualization container:\t$CONTAINER"
@@ -285,8 +289,9 @@ if command -v systemd-detect-virt >/dev/null && VM=$(systemd-detect-virt -v); th
 	echo -e "Virtual Machine (VM) hypervisor:$VM"
 fi
 
-LIBC_VERSION=$(getconf GNU_LIBC_VERSION) # ldd --version | head -n 1 | awk '{ print $NF }'
-echo -e "libc Version:\t\t\t$LIBC_VERSION"
+if LIBC_VERSION=$(getconf GNU_LIBC_VERSION 2>/dev/null); then # ldd --version | head -n 1 | awk '{ print $NF }'
+	echo -e "libc Version:\t\t\t$LIBC_VERSION"
+fi
 
 echo -e "Bash Version:\t\t\t$BASH_VERSION"
 

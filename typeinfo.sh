@@ -110,12 +110,12 @@ int main()
 	cout << "uint32_t:\t\t" << sizeof(uint32_t) << '\n';
 	cout << "int64_t:\t\t" << sizeof(int64_t) << '\n';
 	cout << "uint64_t:\t\t" << sizeof(uint64_t) << '\n';
-	cout << "__int16_t:\t\t" << sizeof(__int16_t) << '\n';
+	/* cout << "__int16_t:\t\t" << sizeof(__int16_t) << '\n';
 	cout << "__uint16_t:\t\t" << sizeof(__uint16_t) << '\n';
 	cout << "__int32_t:\t\t" << sizeof(__int32_t) << '\n';
 	cout << "__uint32_t:\t\t" << sizeof(__uint32_t) << '\n';
 	cout << "__int64_t:\t\t" << sizeof(__int64_t) << '\n';
-	cout << "__uint64_t:\t\t" << sizeof(__uint64_t) << '\n';
+	cout << "__uint64_t:\t\t" << sizeof(__uint64_t) << '\n'; */
 #ifdef __SIZEOF_INT128__
 	cout << "__int128_t:\t\t" << sizeof(__int128_t) << '\n';
 	cout << "__uint128_t:\t\t" << sizeof(__uint128_t) << '\n';
@@ -154,12 +154,12 @@ int main()
 	cout << "uint32_t:\t\t" << setw(width) << 0 << setw(width) << UINT32_MAX << '\n';
 	cout << "int64_t:\t\t" << setw(width) << INT64_MIN << setw(width) << INT64_MAX << '\n';
 	cout << "uint64_t:\t\t" << setw(width) << 0 << setw(width) << UINT64_MAX << '\n';
-	cout << "__int16_t:\t\t" << setw(width) << numeric_limits<__int16_t>::min() << setw(width) << numeric_limits<__int16_t>::max() << '\n';
+	/* cout << "__int16_t:\t\t" << setw(width) << numeric_limits<__int16_t>::min() << setw(width) << numeric_limits<__int16_t>::max() << '\n';
 	cout << "__uint16_t:\t\t" << setw(width) << numeric_limits<__uint16_t>::min() << setw(width) << numeric_limits<__uint16_t>::max() << '\n';
 	cout << "__int32_t:\t\t" << setw(width) << numeric_limits<__int32_t>::min() << setw(width) << numeric_limits<__int32_t>::max() << '\n';
 	cout << "__uint32_t:\t\t" << setw(width) << numeric_limits<__uint32_t>::min() << setw(width) << numeric_limits<__uint32_t>::max() << '\n';
 	cout << "__int64_t:\t\t" << setw(width) << numeric_limits<__int64_t>::min() << setw(width) << numeric_limits<__int64_t>::max() << '\n';
-	cout << "__uint64_t:\t\t" << setw(width) << numeric_limits<__uint64_t>::min() << setw(width) << numeric_limits<__uint64_t>::max() << '\n';
+	cout << "__uint64_t:\t\t" << setw(width) << numeric_limits<__uint64_t>::min() << setw(width) << numeric_limits<__uint64_t>::max() << '\n'; */
 #ifdef __SIZEOF_INT128__
 	cout << "__int128_t:\t\t" << setw(width) << outputbase(numeric_limits<__int128_t>::min()) << setw(width) << outputbase(numeric_limits<__int128_t>::max()) << '\n';
 	cout << "__uint128_t:\t\t" << setw(width) << outputbase(numeric_limits<__uint128_t>::min()) << setw(width) << outputbase(numeric_limits<__uint128_t>::max()) << '\n';
