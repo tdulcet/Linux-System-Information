@@ -39,7 +39,7 @@ Also see the [Linux System Usage Information](https://github.com/tdulcet/System-
 
 ## Usage
 
-Supports all modern Linux distributions from the last 10+ years and the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) (WSL).
+Supports all modern Linux distributions from the last 12+ years, including [BusyBox](https://en.wikipedia.org/wiki/BusyBox), [Toybox](https://en.wikipedia.org/wiki/Toybox) and the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) (WSL).
 
 ### wget
 
@@ -50,7 +50,7 @@ wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/info.s
 ### curl
 
 ```bash
-curl -sL https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
+curl -sfL https://raw.github.com/tdulcet/Linux-System-Information/master/info.sh | bash -s
 ```
 
 ## Example Output
@@ -93,7 +93,7 @@ Terminal:                       xterm-256color, 198 columns, 53 lines, 256 color
 
 ### Datatype Information
 
-Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++11. Supports both Linux and macOS.
+Outputs C/C++ datatype information, including datatype sizes, minimum values, maximum values, etc. for the current system. Requires C++11. Supports Unix, including both Linux and macOS.
 
 ```bash
 wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typeinfo.sh | bash -s
@@ -101,7 +101,7 @@ wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/typein
 
 ### Public IP addresses
 
-Outputs your public IP addresses using a couple dozen different services to find the one with the best HTTPS and DNS response times on your network.
+Outputs your public IP addresses using a few dozen different services to find the one with the best HTTPS and DNS response times on your network.
 
 ```bash
 wget -qO - https://raw.github.com/tdulcet/Linux-System-Information/master/ipinfo.sh | bash -s
@@ -128,5 +128,6 @@ Pull requests welcome! Ideas for contributions:
 * Add more system information
 	* Show SELinux status
 	* Show the DNS Server
+	* Show memory DDR type
 * Add more examples
 * Improve the performance

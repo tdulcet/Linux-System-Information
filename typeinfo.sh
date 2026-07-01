@@ -14,7 +14,7 @@ fi
 
 if ! command -v g++ >/dev/null; then
 	echo "Error: This script requires the GNU C compiler" >&2
-	echo "On Ubuntu and Debian run: 'sudo apt-get update' and 'sudo apt-get install -y build-essential'" >&2
+	echo "On Ubuntu and Debian run: 'sudo apt update' and 'sudo apt install -y build-essential'" >&2
 	exit 1
 fi
 
@@ -184,5 +184,5 @@ int main()
 EOF
 
 trap 'rm /tmp/types{.cpp,}' EXIT
-"$CXX" -std=gnu++11 -Wall -g -O3 /tmp/types.cpp -o /tmp/types
+"$CXX" -std=gnu++11 -Wall -Wextra -g -O3 /tmp/types.cpp -o /tmp/types
 /tmp/types
